@@ -12,17 +12,18 @@ class User
   end
 
   def save!
-    users = JSON.parse(File.read('users.json'))
     if File.open('users.json', 'a+').read == ""
       @id = 1
     else
-      @id = users.last["id"]
+      users = JSON.parse(File.read('users.json'))
+      @id = users.last["id"] + 1
     end
 
-    user={"id"=>@id, "name"=>name, "password"=>password, "balance"=>balance}
+    user={"id"=>@id, "name"=>name, "password"=>password, "balance"=>balance.to_i}
     if File.open('users.json', 'a+').read == ""
       File.write('users.json', JSON.dump([user])) # new user creation when db empty
     else
+      users = JSON.parse(File.read('users.json'))
       users << user
       File.write('users.json', JSON.dump(users)) # new user creation when db has value
     end
@@ -54,7 +55,9 @@ class User
       puts "User balance(Integer): "
       balance = gets.chomp
       User.new(name: name,balance: balance, password: password).save!
+      users = JSON.parse(File.read('users.json'))
       binding.pry
+      puts users
     when '2'
       puts "Your Name: "
       name = gets.chomp
@@ -67,7 +70,6 @@ class User
       if check1 == check2
         user = check1.first
         # account = Atm.new(atm)
-
       else
         puts "Wrong User Name or Password"
       end

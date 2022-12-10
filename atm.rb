@@ -3,10 +3,10 @@ require './user'
 class Atm < User
   # use this portion to override the json after withdraw,deposit,transfer
   # File.write('users.json', JSON.dump(users))
-  user = [User.new.interface]
+  user = User.new.interface
+  # break if user.nil?
   @users = JSON.parse(File.read('users.json'))
   @rest_users = @users - [user]
-  binding.pry
   # loop do
     options = [
       "1- Deposit",
@@ -40,20 +40,21 @@ class Atm < User
       puts "Transfer Account Name: "
       name = gets.chomp
       puts "Transfer Account ID: "
-      id = gets.chomp
+      id = gets.chomp.to_i
       check1 = @rest_users.select{|x| x["name"] == name}
       check2 = @rest_users.select{|x| x["id"] == id}
       if check1 == check2
-        transfer_user = check1
+        transfer_user = check1.first
         puts "Transfer amount"
         amount = gets.chomp.to_i
         if user["balance"] >= amount
           user["balance"] -= amount
           transfer_user["balance"] += amount
         end
-        rest_users = @rest_users - [transfer_user]
-        rest_users << transfer_user
-        rest_users << user
+        # rest_users = @rest_users - [transfer_user]
+        # rest_users << transfer_user
+        @rest_users << user
+        File.write('users.json', JSON.dump(@rest_users))
       else
         puts "Wrong transfer User Name or ID"
       end
