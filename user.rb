@@ -1,6 +1,6 @@
 require 'pry'
 require 'json'
-require './atm'
+# require './atm'
 class User
   attr_accessor :id, :name, :password, :balance
 
@@ -36,46 +36,47 @@ class User
     # File.write('users.json', JSON.dump("\n"))
 
   end
+  def interface
+    options = [
+      "1- Create User",
+      "2- Sign in",
+      "3- Exit"
+    ]
+    puts "Select options from below\n" + options.join("\n")
 
-  options = [
-    "1- Create User",
-    "2- Sign in",
-    "3- Exit"
-  ]
-  puts "Select options from below\n" + options.join("\n")
+    case gets.chomp
+    when '1'
+      puts "For creating a new User fill this info\n"
+      puts "User name(String): "
+      name = gets.chomp
+      puts "User password(String): "
+      password = gets.chomp
+      puts "User balance(Integer): "
+      balance = gets.chomp
+      User.new(name: name,balance: balance, password: password).save!
+      binding.pry
+    when '2'
+      puts "Your Name: "
+      name = gets.chomp
+      puts "Your password: "
+      password = gets.chomp
+      users = JSON.parse(File.read('users.json'))
 
-  case gets.chomp
-  when '1'
-    puts "For creating a new User fill this info\n"
-    puts "User name(String): "
-    name = gets.chomp
-    puts "User password(String): "
-    password = gets.chomp
-    puts "User balance(Integer): "
-    balance = gets.chomp
-    User.new(name: name,balance: balance, password: password).save!
-    binding.pry
-  when '2'
-    puts "Your Name: "
-    name = gets.chomp
-    puts "Your password: "
-    password = gets.chomp
-    binding.pry
-    users = JSON.parse(File.read('users.json'))
+      check1 = users.select{|x| x["name"] == name}
+      check2 = users.select{|x| x["password"] == password}
+      if check1 == check2
+        user = check1.first
+        # account = Atm.new(atm)
 
-    check1 = users.select{|x| x["name"] == name}
-    check2 = users.select{|x| x["password"] == password}
-    if check1 == check2
-      @user = check1.first
-      account = Atm.new
-
+      else
+        puts "Wrong User Name or Password"
+      end
+    when '3'
+      puts "Transaction ends"
+      # break statement
     else
-      puts "Wrong User Name or Password"
+      "Wrong option. Try again."
     end
-  when '3'
-    # break statement
-  else
-    "Wrong option. Try again."
   end
 end
 

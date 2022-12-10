@@ -1,10 +1,12 @@
 require 'pry'
-require 'user'
+require './user'
 class Atm < User
   # use this portion to override the json after withdraw,deposit,transfer
   # File.write('users.json', JSON.dump(users))
-  user = @user
-
+  user = [User.new.interface]
+  @users = JSON.parse(File.read('users.json'))
+  @rest_users = @users - [user]
+  binding.pry
   # loop do
     options = [
       "1- Deposit",
@@ -20,6 +22,8 @@ class Atm < User
       # You could merge these lines into account.deposit(get.chomp.to_f)
       amount = gets.chomp.to_i
       user["balance"] += amount
+      @rest_users << user
+      File.write('users.json', JSON.dump(@rest_users))
       # we have to update the whole json again
       #
     when '2'
@@ -27,6 +31,8 @@ class Atm < User
       # You could merge these lines into account.deposit(get.chomp.to_f)
       amount = gets.chomp.to_i
       user["balance"] -= amount
+      @rest_users << user
+      File.write('users.json', JSON.dump(@rest_users))
       # we have to update the whole json again
     when '3'
       puts "User Name #{user["name"]} & Balance #{user["balance"]}"
@@ -35,9 +41,8 @@ class Atm < User
       name = gets.chomp
       puts "Transfer Account ID: "
       id = gets.chomp
-      users = JSON.parse(File.read('users.json')) # this might change
-      check1 = users.select{|x| x["name"] == name}
-      check2 = users.select{|x| x["id"] == id}
+      check1 = @rest_users.select{|x| x["name"] == name}
+      check2 = @rest_users.select{|x| x["id"] == id}
       if check1 == check2
         transfer_user = check1
         puts "Transfer amount"
@@ -46,10 +51,14 @@ class Atm < User
           user["balance"] -= amount
           transfer_user["balance"] += amount
         end
+        rest_users = @rest_users - [transfer_user]
+        rest_users << transfer_user
+        rest_users << user
       else
         puts "Wrong transfer User Name or ID"
       end
     when '5'
+      puts "Transaction ends"
       #break
     else
       "Wrong option. Try again."
