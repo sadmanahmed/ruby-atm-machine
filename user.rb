@@ -41,7 +41,8 @@ class User
     options = [
       "1- Create User",
       "2- Sign in",
-      "3- Exit"
+      "3- Exit",
+    #"4- Return to Menu"
     ]
     puts "Select options from below\n" + options.join("\n")
 
@@ -75,7 +76,7 @@ class User
       end
     when '3'
       puts "Transaction ends"
-      # break statement
+      exit 0
     else
       "Wrong option. Try again."
     end

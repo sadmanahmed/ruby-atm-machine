@@ -1,10 +1,10 @@
 require 'pry'
 require './user'
-class Atm < User
+class Atm
   # use this portion to override the json after withdraw,deposit,transfer
   # File.write('users.json', JSON.dump(users))
   user = User.new.interface
-  # break if user.nil?
+  exit 0 if user.nil?
   @users = JSON.parse(File.read('users.json'))
   @rest_users = @users - [user]
   # loop do
@@ -60,6 +60,7 @@ class Atm < User
       end
     when '5'
       puts "Transaction ends"
+      exit 0
       #break
     else
       "Wrong option. Try again."
